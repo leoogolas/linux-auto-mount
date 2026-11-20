@@ -12,7 +12,9 @@ Run this command in a terminal:
 curl -fsSL https://raw.githubusercontent.com/leoogolas/linux-auto-mount/main/install.sh | bash
 ```
 
-The installer downloads the script and systemd user service, enables the service, and starts it immediately.
+The installer downloads the script and systemd user service, installs a Polkit rule that allows members of the `wheel` group to mount filesystems without an administrator password, restarts Polkit, and enables the service.
+
+The installer will ask for your administrator password once to install the Polkit rule.
 
 ## Check status
 
@@ -47,9 +49,17 @@ systemctl --user daemon-reload
 systemctl --user reset-failed
 ```
 
+To remove the Polkit rule as well:
+
+```bash
+sudo rm /etc/polkit-1/rules.d/10-mount-without-password.rules
+sudo systemctl restart polkit
+```
+
 ## Notes
 
 - Requires `udisks2` and `curl`.
 - Designed for desktop Linux distributions, including Bazzite.
 - The service runs as a user service and mounts disks using UDisks.
+- The Polkit rule applies to members of the `wheel` group.
 - The polling interval defaults to 10 seconds.
